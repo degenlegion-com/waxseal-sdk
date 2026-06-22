@@ -1,0 +1,44 @@
+{
+    "name": "@waxseal/verify",
+    "version": "1.0.0",
+    "description": "Verify Wax Seal cryptographic identities and webhook signatures",
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.js",
+        "types": "./dist/index.d.ts"
+      },
+      "./badge": {
+        "import": "./dist/badge.mjs",
+        "require": "./dist/badge.js",
+        "types": "./dist/badge.d.ts"
+      },
+      "./webhooks": {
+        "import": "./dist/webhooks.mjs",
+        "require": "./dist/webhooks.js",
+        "types": "./dist/webhooks.d.ts"
+      }
+    },
+    "files": ["dist"],
+    "scripts": {
+      "build": "tsc && tsc -p tsconfig.esm.json",
+      "prepublishOnly": "npm run build"
+    },
+    "keywords": ["waxseal", "identity", "nft", "verify", "cryptographic", "web3"],
+    "license": "MIT",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/degenlegion-com/waxseal-sdk.git"
+    },
+    "homepage": "https://waxseal.id",
+    "peerDependencies": {
+      "react": ">=17"
+    },
+    "peerDependenciesMeta": {
+      "react": { "optional": true }
+    }
+  }
+  
