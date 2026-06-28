@@ -131,7 +131,7 @@ async function fetchSealMeta(fingerprint: string): Promise<SealMeta | null> {
 
 const TOOLS: Tool[] = [
   {
-    name: "waxseal_platform_info",
+    name: "waxseal.info",
     description:
       "Returns an overview of the WaxSeal cryptographic trust infrastructure platform — what it is, " +
       "the 11 trust layers it covers, available tiers, and how to use these MCP tools. " +
@@ -139,7 +139,7 @@ const TOOLS: Tool[] = [
     inputSchema: { type: "object", properties: {} },
   },
   {
-    name: "waxseal_verify_identity",
+    name: "waxseal.identity.verify",
     description:
       "Look up a WaxSeal cryptographic identity by its 64-character hex fingerprint. " +
       "Returns on-chain status, display name, chain, owner wallet, lifecycle status, and the public key. " +
@@ -158,12 +158,12 @@ const TOOLS: Tool[] = [
     },
   },
   {
-    name: "waxseal_sign_document",
+    name: "waxseal.document.sign",
     description:
       "Sign a document or message with the user's WaxSeal Ed25519 private key. " +
       "Requires the WAXSEAL_PRIVATE_KEY_PEM environment variable to be set. " +
       "Returns the fingerprint, SHA-256 content hash, and base64 Ed25519 signature — " +
-      "verifiable by anyone using waxseal_verify_signature.",
+      "verifiable by anyone using waxseal.signature.verify.",
     inputSchema: {
       type: "object",
       required: ["content"],
@@ -180,9 +180,9 @@ const TOOLS: Tool[] = [
     },
   },
   {
-    name: "waxseal_verify_signature",
+    name: "waxseal.signature.verify",
     description:
-      "Verify an Ed25519 signature produced by waxseal_sign_document (or any WaxSeal-compatible signer). " +
+      "Verify an Ed25519 signature produced by waxseal.document.sign (or any WaxSeal-compatible signer). " +
       "Fetches the public key for the fingerprint from the WaxSeal network, then verifies locally. " +
       "The seal must be minted on-chain for verification to succeed.",
     inputSchema: {
@@ -199,17 +199,17 @@ const TOOLS: Tool[] = [
         },
         signature: {
           type: "string",
-          description: "Base64 Ed25519 signature returned by waxseal_sign_document.",
+          description: "Base64 Ed25519 signature returned by waxseal.document.sign.",
         },
       },
     },
   },
   {
-    name: "waxseal_create_approval",
+    name: "waxseal.approval.create",
     description:
       "Create a signed approval token that proves a human explicitly authorized a specific AI agent action. " +
       "The token encodes the action, context, expiry, and is signed with the user's WaxSeal key. " +
-      "Pass the token to the AI agent — it calls waxseal_verify_approval before executing. " +
+      "Pass the token to the AI agent — it calls waxseal.approval.verify before executing. " +
       "Requires WAXSEAL_PRIVATE_KEY_PEM.",
     inputSchema: {
       type: "object",
@@ -233,7 +233,7 @@ const TOOLS: Tool[] = [
     },
   },
   {
-    name: "waxseal_verify_approval",
+    name: "waxseal.approval.verify",
     description:
       "Verify a WaxSeal approval token before an AI agent executes a high-risk or irreversible action. " +
       "Checks the cryptographic signature, expiry, and optionally confirms the signer's fingerprint. " +
@@ -244,7 +244,7 @@ const TOOLS: Tool[] = [
       properties: {
         approval_token: {
           type: "string",
-          description: "The base64-encoded approval token returned by waxseal_create_approval.",
+          description: "The base64-encoded approval token returned by waxseal.approval.create.",
         },
         expected_fingerprint: {
           type: "string",
@@ -295,12 +295,12 @@ function handlePlatformInfo() {
     developers: "https://waxseal.id/developers",
     get_your_seal: "https://waxseal.id/create",
     mcp_tools: [
-      "waxseal_platform_info — this overview",
-      "waxseal_verify_identity — look up any WaxSeal fingerprint",
-      "waxseal_sign_document — sign content with your WaxSeal private key",
-      "waxseal_verify_signature — verify a WaxSeal Ed25519 signature",
-      "waxseal_create_approval — create a signed human-approval token for an AI agent",
-      "waxseal_verify_approval — verify an approval token before executing a high-risk action",
+      "waxseal.info — this overview",
+      "waxseal.identity.verify — look up any WaxSeal fingerprint",
+      "waxseal.document.sign — sign content with your WaxSeal private key",
+      "waxseal.signature.verify — verify a WaxSeal Ed25519 signature",
+      "waxseal.approval.create — create a signed human-approval token for an AI agent",
+      "waxseal.approval.verify — verify an approval token before executing a high-risk action",
     ],
     env_vars: {
       WAXSEAL_PRIVATE_KEY_PEM:
@@ -375,7 +375,7 @@ async function handleSignDocument(args: Record<string, unknown>) {
     verification_url: `https://waxseal.id/verify?fp=${fingerprint}`,
     how_to_verify:
       "Share fingerprint + content + signature with the verifier. " +
-      "They call waxseal_verify_signature({ content, fingerprint, signature }) or POST /api/verify/seal.",
+      "They call waxseal.signature.verify({ content, fingerprint, signature }) or POST /api/verify/seal.",
   };
 }
 
@@ -502,7 +502,7 @@ async function handleCreateApproval(args: Record<string, unknown>) {
     expires_at: new Date(expiresAt * 1000).toISOString(),
     instructions:
       "Pass approval_token to the AI agent. " +
-      "The agent calls waxseal_verify_approval({ approval_token }) before executing the action. " +
+      "The agent calls waxseal.approval.verify({ approval_token }) before executing the action. " +
       "The token expires in " + expiresInMinutes + " minute(s).",
   };
 }
@@ -629,22 +629,22 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     let result: unknown;
 
     switch (name) {
-      case "waxseal_platform_info":
+      case "waxseal.info":
         result = handlePlatformInfo();
         break;
-      case "waxseal_verify_identity":
+      case "waxseal.identity.verify":
         result = await handleVerifyIdentity(safeArgs);
         break;
-      case "waxseal_sign_document":
+      case "waxseal.document.sign":
         result = await handleSignDocument(safeArgs);
         break;
-      case "waxseal_verify_signature":
+      case "waxseal.signature.verify":
         result = await handleVerifySignature(safeArgs);
         break;
-      case "waxseal_create_approval":
+      case "waxseal.approval.create":
         result = await handleCreateApproval(safeArgs);
         break;
-      case "waxseal_verify_approval":
+      case "waxseal.approval.verify":
         result = await handleVerifyApproval(safeArgs);
         break;
       default:
