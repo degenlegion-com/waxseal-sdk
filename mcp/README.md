@@ -27,12 +27,12 @@
 
   | Tool | What it does | Key required? |
   |------|-------------|:---:|
-  | `waxseal_platform_info` | Platform overview, tiers, trust layers, and tool guide | No |
-  | `waxseal_verify_identity` | Look up fingerprint → name, chain, wallet, status | No |
-  | `waxseal_verify_signature` | Confirm an Ed25519 signature against an on-chain public key | No |
-  | `waxseal_verify_approval` | Validate a human approval token before executing | No |
-  | `waxseal_sign_document` | Sign any content with your WaxSeal private key | **Yes** |
-  | `waxseal_create_approval` | Create a signed, time-limited approval token | **Yes** |
+  | `waxseal.info` | Platform overview, tiers, trust layers, and tool guide | No |
+  | `waxseal.identity.verify` | Look up fingerprint → name, chain, wallet, status | No |
+  | `waxseal.signature.verify` | Confirm an Ed25519 signature against an on-chain public key | No |
+  | `waxseal.approval.verify` | Validate a human approval token before executing | No |
+  | `waxseal.document.sign` | Sign any content with your WaxSeal private key | **Yes** |
+  | `waxseal.approval.create` | Create a signed, time-limited approval token | **Yes** |
 
   Verify-only tools work with zero configuration. Signing tools require `WAXSEAL_PRIVATE_KEY_PEM`.
 
@@ -109,7 +109,7 @@
 
   ## Tool reference
 
-  ### `waxseal_platform_info`
+  ### `waxseal.info`
 
   Returns a full overview of the WaxSeal trust infrastructure — 11 trust layers, available tiers, and a guide to the other MCP tools. Call this first if your AI client is unfamiliar with WaxSeal.
 
@@ -117,7 +117,7 @@
 
   ---
 
-  ### `waxseal_verify_identity`
+  ### `waxseal.identity.verify`
 
   Look up any WaxSeal fingerprint. Returns on-chain status, display name, owner wallet, chain, and lifecycle status.
 
@@ -141,9 +141,9 @@
 
   ---
 
-  ### `waxseal_sign_document`
+  ### `waxseal.document.sign`
 
-  Signs any text or document with your WaxSeal Ed25519 private key. Returns a fingerprint, SHA-256 content hash, and base64 signature verifiable by anyone with `waxseal_verify_signature`.
+  Signs any text or document with your WaxSeal Ed25519 private key. Returns a fingerprint, SHA-256 content hash, and base64 signature verifiable by anyone with `waxseal.signature.verify`.
 
   **Requires `WAXSEAL_PRIVATE_KEY_PEM`.**
 
@@ -165,7 +165,7 @@
 
   ---
 
-  ### `waxseal_verify_signature`
+  ### `waxseal.signature.verify`
 
   Verifies an Ed25519 signature against the public key stored on-chain for the given fingerprint. The seal must be active for verification to pass.
 
@@ -188,7 +188,7 @@
 
   ---
 
-  ### `waxseal_create_approval`
+  ### `waxseal.approval.create`
 
   Creates a cryptographically signed approval token proving you explicitly authorized a specific action. The token is time-limited, tamper-evident, and tied to your on-chain identity.
 
@@ -205,7 +205,7 @@
     "approval_token": "base64...",
     "action": "Deploy v2.1.0 to production",
     "expires_at": "2026-06-01T12:10:00Z",
-    "instructions": "Pass approval_token to the agent. Agent calls waxseal_verify_approval before executing."
+    "instructions": "Pass approval_token to the agent. Agent calls waxseal.approval.verify before executing."
   }
   ```
 
@@ -213,12 +213,12 @@
 
   ---
 
-  ### `waxseal_verify_approval`
+  ### `waxseal.approval.verify`
 
   Verifies an approval token before executing a high-risk or irreversible action. Returns `valid: true` only when the token is cryptographically authentic, unexpired, and the signer has an active on-chain seal.
 
   ```
-  approval_token        string   token from waxseal_create_approval
+  approval_token        string   token from waxseal.approval.create
   expected_fingerprint  string?  require a specific signer (optional)
   ```
 
@@ -244,9 +244,9 @@
 
   ```
   1.  Human → Claude: "Deploy when ready. Here's my approval:"
-  2.  Human runs:   waxseal_create_approval({ action: "Deploy v2.1.0", expires_in_minutes: 30 })
+  2.  Human runs:   waxseal.approval.create({ action: "Deploy v2.1.0", expires_in_minutes: 30 })
   3.  Claude stores the approval_token
-  4.  Claude finishes work, then calls: waxseal_verify_approval({ approval_token })
+  4.  Claude finishes work, then calls: waxseal.approval.verify({ approval_token })
   5.  valid: true  →  Claude deploys
       valid: false →  Claude stops and requests a fresh approval
   ```
