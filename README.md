@@ -2,18 +2,17 @@
     <img src="assets/banner.png" alt="Wax Seal SDK" width="100%" />
   </p>
 
-  <h1 align="center">@waxseal/verify</h1>
+  <h1 align="center">WaxSeal SDK</h1>
 
   <p align="center">
-    <strong>Cryptographic identity for the open web.</strong><br/>
-    Verify seals, replace passwords, sign documents — one fingerprint, one on-chain record.
+    <strong>Cryptographic identity for the open web and for AI agents.</strong><br/>
+    One Ed25519 keypair. One 64-character fingerprint. Permanent on-chain record.
   </p>
 
   <p align="center">
     <a href="https://waxseal.id">waxseal.id</a> ·
     <a href="https://waxseal.id/developers">Developer Docs</a> ·
-    <a href="https://waxseal.id/docs">API Reference</a> ·
-    <a href="https://waxseal.id/developers/verify">Verify Guide</a>
+    <a href="https://waxseal.id/create">Get your seal</a>
   </p>
 
   <p align="center">
@@ -24,25 +23,67 @@
 
   ---
 
+  ## Packages
+
+  | Package | What it is |
+  |---------|-----------|
+  | [`@waxseal/verify`](#waxsealverify) | Browser + Node SDK — verify identities, validate signatures, embed badges, verify webhooks |
+  | [`@waxseal/mcp`](./mcp) | MCP server for Claude, Cursor, and Windsurf — verify identities, sign documents, gate AI actions with human approvals |
+
+  ---
+
+  ## `@waxseal/mcp` — for AI agents
+
+  <a href="https://smithery.ai/servers/degenlegion-com/waxseal"><img src="https://smithery.ai/badge/degenlegion-com/waxseal" alt="Smithery" /></a>
+  <img src="https://img.shields.io/npm/v/@waxseal/mcp?color=crimson&label=npm" alt="npm" />
+
+  Give Claude, Cursor, or Windsurf a cryptographic identity layer in two minutes.
+
+  ```json
+  {
+    "mcpServers": {
+      "waxseal": {
+        "command": "npx",
+        "args": ["-y", "@waxseal/mcp"],
+        "env": {
+          "WAXSEAL_PRIVATE_KEY_PEM": "-----BEGIN PRIVATE KEY-----\n<your key>\n-----END PRIVATE KEY-----"
+        }
+      }
+    }
+  }
+  ```
+
+  **What the 6 tools give your agent:**
+
+  - Look up any WaxSeal fingerprint — name, chain, owner wallet, lifecycle status
+  - Verify an Ed25519 signature against an on-chain public key
+  - Sign documents and artifacts with your private key (stays on your machine)
+  - Create a time-limited human approval token before a high-risk action runs
+  - Verify that approval token — `valid: true` only if authentic, unexpired, and on-chain
+
+  **Hosted server (no install):** `https://api.waxseal.id/mcp`
+
+  → [Full MCP docs](./mcp/README.md) · [Smithery listing](https://smithery.ai/servers/degenlegion-com/waxseal) · [npm](https://www.npmjs.com/package/@waxseal/mcp)
+
+  ---
+
+  ## `@waxseal/verify` — for apps and backends {#waxsealverify}
+
+  <img src="https://img.shields.io/npm/v/@waxseal/verify?color=blue&label=npm" alt="npm" />
+
+  ```bash
+  npm install @waxseal/verify
+  ```
+
+  Works in **React**, **Vue**, **Node.js**, **n8n**, serverless functions, and any runtime with `fetch`.
+
   <p align="center">
     <img src="assets/seals.png" alt="Wax Seal examples" width="80%" />
   </p>
 
-  ## What is Wax Seal?
+  ### Two modes, one fingerprint
 
-  Wax Seal turns a MetaMask wallet into a **cryptographic identity**. Every user gets a unique 64-character fingerprint tied to an NFT on-chain. That fingerprint is:
-
-  - **Permanent** — stored on Ethereum, Base, BSC, or Polygon, forever
-  - **Verifiable** — any server can confirm it in a single API call, no credentials stored
-  - **Sovereign** — the private key never leaves the user's device
-
-  This SDK is the developer interface to that identity layer.
-
-  ---
-
-  ## Two modes, one fingerprint
-
-  ### Mode 1 · Badge Verification
+  #### Mode 1 · Badge Verification
 
   > *"Does this WaxSeal exist and is it real?"*
 
@@ -52,7 +93,6 @@
   - ✦ Verified author badge on blog posts and articles
   - ✦ Contributor identity on GitHub-style tools
   - ✦ Publisher verification on CMS platforms
-  - ✦ Embed a "Sealed by" badge on any webpage
   - ✦ Prove you created something before AI did
 
   ```ts
@@ -68,11 +108,11 @@
 
   ---
 
-  ### Mode 2 · Login & Action Approval
+  #### Mode 2 · Login & Action Approval
 
   > *"Did this person sign this, right now?"*
 
-  A signed challenge proves the key holder is present. This replaces passwords, OTP, and email verification loops entirely.
+  A signed challenge proves the key holder is present — replaces passwords, OTP, and email loops entirely.
 
   **Use cases**
   - ✦ Passwordless sign-in — no email, no OTP, no credentials to breach
@@ -85,7 +125,7 @@
   const seal = await verifySeal({
     fingerprint: "a1b2c3d4...",
     message:     "I approve this transfer.",
-    signature:   "base64url...",           // signed by the user's wallet
+    signature:   "base64url...",
   });
 
   if (seal.valid && seal.onChain && seal.signatureValid) {
@@ -95,28 +135,15 @@
 
   ---
 
-  ## Install
-
-  ```bash
-  npm install @waxseal/verify
-  ```
-
-  Works in **React**, **Vue**, **Node.js**, **n8n Code nodes**, serverless functions, and any runtime that supports `fetch`.
-
-  ---
-
-  ## React Badge
-
-  Drop a live verified identity badge anywhere in your app:
+  ### React Badge
 
   ```tsx
   import { WaxSealBadge } from "@waxseal/verify/badge";
 
-  // Shows "✦ Wax Seal · Ada Lovelace" linked to the public seal page
   <WaxSealBadge fingerprint="a1b2c3d4..." />
   ```
 
-  Or build your own with the hook:
+  Or build your own:
 
   ```tsx
   import { useEffect, useState } from "react";
@@ -143,9 +170,7 @@
 
   ---
 
-  ## HTML Embed (no build step)
-
-  Two lines, works on any static site, CMS, or blog:
+  ### HTML Embed (no build step)
 
   ```html
   <script src="https://waxseal.id/embed.js"></script>
@@ -157,9 +182,7 @@
 
   ---
 
-  ## Webhook Verification
-
-  Wax Seal signs every outgoing webhook event with HMAC-SHA256. Always verify before acting.
+  ### Webhook Verification
 
   ```ts
   import { verifyWebhookSignature, isWaxSealWebhookEvent } from "@waxseal/verify/webhooks";
@@ -179,15 +202,11 @@
       console.log("New seal:", event.data.fingerprint, "on", event.data.chain);
     }
 
-    if (isWaxSealWebhookEvent(event, "seal.subscription.started")) {
-      // Provision access, send welcome email, update your DB
-    }
-
     res.sendStatus(200);
   });
   ```
 
-  ### Webhook events
+  **Webhook events**
 
   | Event | When it fires |
   |---|---|
@@ -198,13 +217,9 @@
   | `seal.subscription.ended` | A subscription expired or was cancelled |
   | `challenge.approved` | A login challenge was verified — user authenticated |
 
-  Webhook URLs are registered in your [Developer dashboard](https://waxseal.id/developer). Native setup guides for **n8n**, **Make.com**, and **Zapier** at [waxseal.id/developers/webhooks](https://waxseal.id/developers/webhooks).
-
   ---
 
-  ## REST API — no SDK, no API key
-
-  For backends that can't run Node modules, or automation tools like Make.com and Zapier:
+  ### REST API — no SDK, no key required
 
   ```
   POST https://api.waxseal.id/v1/verify
@@ -212,8 +227,8 @@
 
   {
     "fingerprint": "<64-char hex>",
-    "message":     "...",       // optional
-    "signature":   "..."        // optional — triggers sig check
+    "message":     "...",
+    "signature":   "..."
   }
   ```
 
@@ -229,51 +244,41 @@
   }
   ```
 
-  No API key required for public verification. Use an **n8n HTTP Request** node or **Make.com HTTP** module — no custom connector needed.
-
   ---
 
-  ## Works with everything
+  ### Works with everything
 
   | Stack | How |
   |---|---|
   | **React / Vue / Svelte** | `npm install @waxseal/verify` |
-  | **Node.js / Express** | Same npm package + webhook helper |
+  | **Node.js / Express** | Same package + webhook helper |
   | **n8n** | HTTP Request node → REST API, or npm package in Code node |
   | **Make.com** | HTTP module → REST API |
   | **Zapier** | Webhook by Zapier trigger |
-  | **PHP / Python / Go / Ruby** | Plain HTTP POST to the REST API |
+  | **PHP / Python / Go** | Plain HTTP POST to the REST API |
   | **Static HTML / CMS** | Two-line `embed.js` snippet |
+  | **Claude / Cursor / Windsurf** | [`@waxseal/mcp`](./mcp) |
 
   ---
 
-  ## VerifyResult type
+  ### VerifyResult type
 
   ```ts
   type VerifyResult = {
-    valid: boolean;            // seal exists and is well-formed
-    fingerprint: string;       // 64-char hex identifier
-    onChain: boolean;          // confirmed in the on-chain registry
+    valid: boolean;
+    fingerprint: string;
+    onChain: boolean;
     chain?: "ethereum" | "base" | "polygon" | "bsc";
-    walletAddress?: string;    // wallet that minted the seal
-    displayName?: string;      // human-readable name
+    walletAddress?: string;
+    displayName?: string;
     publicKeyConfirmed?: boolean;
-    signatureValid?: boolean;  // only when message + signature are provided
-    verifiedAt?: string;       // ISO 8601
+    signatureValid?: boolean;
+    verifiedAt?: string;
     error?: string;
   };
   ```
 
   ---
 
-  ## License
-
   MIT © [Wax Seal](https://waxseal.id)
   
-
-## Packages
-
-| Package | Description |
-|---------|-------------|
-| [@waxseal/verify](.) | Verify seals, webhooks, and badges — browser + Node SDK |
-| [@waxseal/mcp](./mcp) | MCP server for Claude Desktop, Cursor, Windsurf — sign docs, verify identities, create AI approval gates |
