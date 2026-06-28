@@ -1,0 +1,55 @@
+{
+  "name": "@waxseal/mcp",
+  "version": "1.0.1",
+  "description": "WaxSeal MCP Server \u2014 verify cryptographic identities, sign documents, and create AI approval gates from Claude Desktop, Cursor, and Windsurf.",
+  "type": "module",
+  "bin": {
+    "waxseal-mcp": "./bin/waxseal-mcp"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "bin",
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.js --banner:js='#!/usr/bin/env node'",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "waxseal",
+    "ed25519",
+    "cryptographic-identity",
+    "ai-agents",
+    "human-in-the-loop",
+    "document-signing",
+    "trust",
+    "claude",
+    "cursor"
+  ],
+  "author": "Wax Seal <hello@waxseal.id>",
+  "license": "MIT",
+  "homepage": "https://waxseal.id",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/waxseal/mcp"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.3",
+    "esbuild": "0.28.1",
+    "typescript": "~5.9.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
