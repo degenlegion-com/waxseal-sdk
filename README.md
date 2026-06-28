@@ -270,3 +270,10 @@
 
   MIT © [Wax Seal](https://waxseal.id)
   
+
+## Packages
+
+| Package | Description |
+|---------|-------------|
+| [@waxseal/verify](.) | Verify seals, webhooks, and badges — browser + Node SDK |
+| [@waxseal/mcp](./mcp) | MCP server for Claude Desktop, Cursor, Windsurf — sign docs, verify identities, create AI approval gates |
