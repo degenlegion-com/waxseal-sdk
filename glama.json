@@ -1,3 +1,22 @@
 {
-  "$schema": "https://glama.ai/mcp/glama.schema.json"
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "maintainers": [
+    "degenlegion-com"
+  ],
+  "name": "WaxSeal",
+  "description": "MCP server for WaxSeal cryptographic identity — verify fingerprints on Ethereum, Base, and BNB Chain; sign documents with Ed25519; and gate irreversible AI agent actions with human-signed approval tokens.",
+  "keywords": [
+    "cryptography",
+    "identity",
+    "blockchain",
+    "ed25519",
+    "signature",
+    "verification",
+    "approval",
+    "ethereum",
+    "base",
+    "bnb-chain",
+    "trust",
+    "ai-agent"
+  ]
 }
