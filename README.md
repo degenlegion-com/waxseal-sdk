@@ -19,6 +19,7 @@
     <img src="https://img.shields.io/badge/license-MIT-crimson.svg" alt="MIT License" />
     <img src="https://img.shields.io/badge/TypeScript-ready-blue.svg" alt="TypeScript" />
     <img src="https://img.shields.io/badge/REST%20API-no%20key%20required-green.svg" alt="REST API" />
+    <a href="https://glama.ai/mcp/servers/degenlegion-com/waxseal-sdk"><img src="https://glama.ai/mcp/servers/degenlegion-com/waxseal-sdk/badges/score.svg" alt="waxseal-sdk MCP server" /></a>
   </p>
 
   ---
