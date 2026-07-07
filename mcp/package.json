@@ -35,7 +35,7 @@
   "homepage": "https://waxseal.id",
   "repository": {
     "type": "git",
-    "url": "https://github.com/waxseal/mcp"
+    "url": "https://github.com/degenlegion-com/waxseal-sdk.git"
   },
   "engines": {
     "node": ">=18.0.0"
